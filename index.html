@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Petições - Apito Legal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="#">APITO LEGAL</a>
+        </div>
+        
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="#" class="active">QUEM SOMOS</a></li>
+                <li><a href="#">EVENTOS</a></li>
+                <li><a href="#">EDUCAÇÃO</a></li>
+            </ul>
+        </nav>
+        
+        <div class="social-icons">
+            <a href="#" aria-label="Instagram"><img src="images/instagram.png" alt="Logo Instagram"></a>
+            <a href="#" aria-label="Twitter"><img src="images/twitter.png" alt="Logo Twitter"></a>
+            <a href="#" aria-label="TikTok"><img src="images/tik-tok.png" alt="Logo TikTok"></a>
+        </div>
+    </header>
+
+    <div class="contact-container">
+        <!-- Seção de Download (oculta inicialmente) -->
+        <div class="download-section" id="downloadSection">
+            <h3>🎉 Sua petição está pronta!</h3>
+            <p>O Justinho gerou sua petição de defesa com sucesso.</p>
+            <a href="#" class="download-link" onclick="simularDownload('docx')">📄 Baixar em Word (.docx)</a>
+            <a href="#" class="download-link" onclick="simularDownload('pdf')">📄 Baixar em PDF (.pdf)</a>
+            <p style="margin-top: 15px; font-size: 14px; color: rgba(255,255,255,0.7);">
+                ⚠️ Lembre-se de revisar o documento com um advogado especializado antes do protocolo.
+            </p>
+        </div>
+
+        <div class="contact-header">
+            <h1 class="page-title">GERADOR AUTOMÁTICO DE PETIÇÕES</h1>
+            <p class="contact-subtitle">
+                O Justinho irá criar sua petição de defesa automaticamente usando Inteligência Artificial
+            </p>
+        </div>
+        
+        <div class="contact-content">
+            <!-- Formulário de Geração de Petições com IA -->
+            <div class="contact-form-container">
+                <div class="ai-header">
+                    <h2>🤖 Justinho - Assistente Jurídico IA</h2>
+                    <p class="ai-subtitle">Preencha os campos abaixo e nossa IA gerará uma petição de defesa personalizada</p>
+                </div>
+                
+                <form id="peticaoForm" class="contact-form ai-form">
+                    <!-- Informações Pessoais -->
+                    <div class="form-section">
+                        <h3>📋 Informações Pessoais</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nome_peticao">Nome Completo *</label>
+                                <input type="text" id="nome_peticao" name="nome_peticao" required 
+                                       placeholder="Seu nome completo">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="clube">Clube *</label>
+                                <input type="text" id="clube" name="clube" required 
+                                       placeholder="Nome do clube">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="competicao">Competição *</label>
+                            <input type="text" id="competicao" name="competicao" required 
+                                   placeholder="Nome da competição onde ocorreu a acusação">
+                        </div>
+                    </div>
+                    
+                    <!-- Detalhes da Acusação -->
+                    <div class="form-section">
+                        <h3>⚖️ Detalhes da Acusação</h3>
+                        <div class="form-group">
+                            <label for="acusacao">Acusação *</label>
+                            <textarea id="acusacao" name="acusacao" rows="3" required 
+                                      placeholder="Descreva brevemente a acusação"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contexto">Contexto Detalhado *</label>
+                            <textarea id="contexto" name="contexto" rows="5" required 
+                                      placeholder="Escreva todo o contexto da situação. Seja detalhista e insira fatos que gostaria de destacar."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Objetivos da Defesa -->
+                    <div class="form-section">
+                        <h3>🎯 Objetivos da Defesa</h3>
+                        <div class="form-group">
+                            <label for="pedidos">O que você deseja alcançar? *</label>
+                            <textarea id="pedidos" name="pedidos" rows="4" required 
+                                      placeholder="Exemplo: arquivamento da denúncia, desclassificação da conduta, ser ouvido pessoalmente, etc."></textarea>
+
+                            <!-- Botão de ajuda para objetivos -->
+                            <button type="button" onclick="buscarObjetivosIA()" 
+                                    class="help-btn" id="helpBtn">
+                                ❓ Quer ajuda para saber quais são possíveis objetivos? 
+                            </button>
+
+                            <!-- Resultados inseridos dinamicamente -->
+                            <div id="sugestoes-objetivos"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Anexo de Documentos -->
+                    <div class="form-section">
+                        <h3>📎 Anexar Documentos</h3>
+                        <div class="form-group">
+                            <label for="anexo">Intimação ou Documento Oficial *</label>
+                            <div class="file-upload-area">
+                                <input type="file" id="anexo" name="anexo" accept=".pdf,.doc,.docx,.jpg,.png" style="display: none;">
+                                <div class="file-upload-display">
+                                    <div class="file-attached" id="fileAttached">
+                                        <div class="file-icon">📄</div>
+                                        <div class="file-info">
+                                            <div class="file-name">Intimacao_Jogador_Carlos_Silva.pdf</div>
+                                            <div class="file-size">245 KB</div>
+                                            <div class="file-status">✅ Arquivo anexado com sucesso</div>
+                                        </div>
+                                        <button type="button" class="file-remove-btn" onclick="removerArquivo()">🗑️</button>
+                                    </div>
+                                    <div class="file-upload-placeholder" id="uploadPlaceholder" style="display: none;">
+                                        <div class="upload-icon">📁</div>
+                                        <p>Clique aqui ou arraste o arquivo da intimação</p>
+                                        <small>Formatos aceitos: PDF, DOC, DOCX, JPG, PNG (máx. 10MB)</small>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-upload" onclick="document.getElementById('anexo').click()">
+                                    Alterar Arquivo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-warning">
+                        <p>⚠️ <strong>Importante:</strong> A petição gerada pelo Justinho é uma versão inicial que deve ser revisada por um advogado especializado antes do protocolo.</p>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            Gerar Petição com Justinho
+                        </button>
+                        <button type="button" class="btn btn-demo" id="demoBtn" onclick="iniciarDemo()">
+                            🎬 Demonstração Automática
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Informações Laterais -->
+            <div class="contact-info">
+                <div class="info-card">
+                    <h3>Como Funciona</h3>
+                    <div class="process-steps">
+                        <div class="step">
+                            <span class="step-number">1</span>
+                            <p>Preencha seus dados pessoais e informações do caso</p>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">2</span>
+                            <p>Descreva detalhadamente a acusação e o contexto</p>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">3</span>
+                            <p>Justinho gera sua petição usando IA especializada</p>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">4</span>
+                            <p>Baixe o documento e revise com um advogado</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mascot-section">
+                    <img src="images/justinho.png" alt="Justinho - Mascote do Apito Legal" class="mascot-img">
+                    <p>O Justinho está aqui para criar sua defesa!</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>Vantagens do Justinho</h3>
+                    <ul class="advantages-list">
+                        <li>✅ Geração instantânea de petições</li>
+                        <li>✅ Baseado no CBJD e jurisprudência</li>
+                        <li>✅ Linguagem técnica especializada</li>
+                        <li>✅ Estrutura formal para tribunais</li>
+                        <li>✅ Disponível 24h por dia</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
