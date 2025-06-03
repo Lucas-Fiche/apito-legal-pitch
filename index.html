@@ -21,9 +21,9 @@
         </nav>
         
         <div class="social-icons">
-            <a href="#" aria-label="Instagram"><img src="images/instagram.png" alt="Logo Instagram"></a>
-            <a href="#" aria-label="Twitter"><img src="images/twitter.png" alt="Logo Twitter"></a>
-            <a href="#" aria-label="TikTok"><img src="images/tik-tok.png" alt="Logo TikTok"></a>
+            <a href="#" aria-label="Instagram"><img src="[CAMINHO_PARA_INSTAGRAM_IMG]" alt="Logo Instagram"></a>
+            <a href="#" aria-label="Twitter"><img src="[CAMINHO_PARA_TWITTER_IMG]" alt="Logo Twitter"></a>
+            <a href="#" aria-label="TikTok"><img src="[CAMINHO_PARA_TIKTOK_IMG]" alt="Logo TikTok"></a>
         </div>
     </header>
 
@@ -32,11 +32,10 @@
         <div class="download-section" id="downloadSection">
             <h3>🎉 Sua petição está pronta!</h3>
             <p>O Justinho gerou sua petição de defesa com sucesso.</p>
-            <a href="#" class="download-link" onclick="simularDownload('docx')">📄 Baixar em Word (.docx)</a>
             <a href="#" class="download-link" onclick="simularDownload('pdf')">📄 Baixar em PDF (.pdf)</a>
-            <p style="margin-top: 15px; font-size: 14px; color: rgba(255,255,255,0.7);">
-                ⚠️ Lembre-se de revisar o documento com um advogado especializado antes do protocolo.
-            </p>
+            <div class="contact-warning">
+                <p>⚠️ <strong>Importante:</strong> Após baixar a petição, entre em contato com o nosso núcleo para revisão e acompanhamento jurídico especializado.</p>
+            </div>
         </div>
 
         <div class="contact-header">
@@ -102,15 +101,6 @@
                             <label for="pedidos">O que você deseja alcançar? *</label>
                             <textarea id="pedidos" name="pedidos" rows="4" required 
                                       placeholder="Exemplo: arquivamento da denúncia, desclassificação da conduta, ser ouvido pessoalmente, etc."></textarea>
-
-                            <!-- Botão de ajuda para objetivos -->
-                            <button type="button" onclick="buscarObjetivosIA()" 
-                                    class="help-btn" id="helpBtn">
-                                ❓ Quer ajuda para saber quais são possíveis objetivos? 
-                            </button>
-
-                            <!-- Resultados inseridos dinamicamente -->
-                            <div id="sugestoes-objetivos"></div>
                         </div>
                     </div>
                     
@@ -125,8 +115,8 @@
                                     <div class="file-attached" id="fileAttached">
                                         <div class="file-icon">📄</div>
                                         <div class="file-info">
-                                            <div class="file-name">Intimacao_Jogador_Carlos_Silva.pdf</div>
-                                            <div class="file-size">245 KB</div>
+                                            <div class="file-name">Intimacao_Cleymar_Junior.pdf</div>
+                                            <div class="file-size">156 KB</div>
                                             <div class="file-status">✅ Arquivo anexado com sucesso</div>
                                         </div>
                                         <button type="button" class="file-remove-btn" onclick="removerArquivo()">🗑️</button>
@@ -151,9 +141,6 @@
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary" id="submitBtn">
                             Gerar Petição com Justinho
-                        </button>
-                        <button type="button" class="btn btn-demo" id="demoBtn" onclick="iniciarDemo()">
-                            🎬 Demonstração Automática
                         </button>
                     </div>
                 </form>
@@ -184,7 +171,7 @@
                 </div>
                 
                 <div class="mascot-section">
-                    <img src="images/justinho.png" alt="Justinho - Mascote do Apito Legal" class="mascot-img">
+                    <div style="font-size: 80px; margin-bottom: 10px;">🤖</div>
                     <p>O Justinho está aqui para criar sua defesa!</p>
                 </div>
                 

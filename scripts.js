@@ -1,11 +1,11 @@
 // Dados para a demonstração automática baseados no documento
 const dadosDemo = {
-    nome_peticao: "Luis Ferreira de Souza",
+    nome_peticao: "Cleymar Junior",
     clube: "Atlético Pé de Rato", 
-    competicao: "Campeonato Regional de Futebol – Série A",
-    acusacao: "Praticar jogada violenta durante partida (Art. 254 do CBJD)",
-    contexto: "Durante a partida contra o União Recreativa Vai Que Dá, aos 23 minutos do segundo tempo, o atleta disputou uma bola de forma legítima com o adversário, sem qualquer excesso ou deslealdade. O árbitro assinalou falta e aplicou cartão vermelho direto, registrando em súmula como 'jogada violenta'. A disputa foi de bola, sem intenção de atingir o adversário, não houve lesão ou necessidade de atendimento médico, e as imagens da TV Regional Esportes evidenciam que a jogada foi lícita.",
-    pedidos: "Arquivamento da denúncia por ausência de infração disciplinar; subsidiariamente, desclassificação para infração de menor gravidade com aplicação da pena mínima; produção de prova de vídeo; oitiva pessoal do atleta"
+    competicao: "Série D",
+    acusacao: "Artigo: 258 - Assumir qualquer conduta contrária a disciplina ou a ética desportiva",
+    contexto: "O lance foi muito rápido. A bola veio num cruzamento meio estranho, desviou, e quando eu fui tentar cabecear, ela acabou batendo na minha mão.",
+    pedidos: "Redução da quantidade de jogos suspenso"
 };
 
 /**
@@ -101,8 +101,8 @@ function simularUploadDemo() {
         
         setTimeout(() => {
             // Atualizar informações do arquivo
-            fileAttached.querySelector('.file-name').textContent = 'Intimacao_Luis_Ferreira_STJD.pdf';
-            fileAttached.querySelector('.file-size').textContent = '182 KB';
+            fileAttached.querySelector('.file-name').textContent = 'Intimacao_Cleymar_Junior.pdf';
+            fileAttached.querySelector('.file-size').textContent = '156 KB';
             
             // Mostrar arquivo anexado
             uploadPlaceholder.style.display = 'none';
@@ -116,7 +116,7 @@ function simularUploadDemo() {
                 fileAttached.style.transform = 'scale(1)';
                 resolve();
             }, 300);
-        }, 1500);
+        }, 800);
     });
 }
 
@@ -124,24 +124,53 @@ function simularUploadDemo() {
  * Função principal da demonstração automática
  */
 async function iniciarDemo() {
-    const demoBtn = document.getElementById('demoBtn');
+    console.log('Função iniciarDemo chamada');
+    
     const submitBtn = document.getElementById('submitBtn');
     
-    // Desabilitar botões
-    demoBtn.disabled = true;
+    // Verificar se o botão existe
+    if (!submitBtn) {
+        console.error('Botão submit não encontrado!');
+        return;
+    }
+    
+    // Verificar se já está executando
+    if (submitBtn.disabled) {
+        console.log('Demonstração já está rodando, ignorando...');
+        return;
+    }
+    
+    // Desabilitar botão
     submitBtn.disabled = true;
-    demoBtn.textContent = '🎬 Demonstração em Andamento...';
+    submitBtn.textContent = '🤖 Carregando demonstração...';
     
     try {
+        console.log('Iniciando limpeza do formulário...');
+        
         // Limpar formulário
         document.getElementById('peticaoForm').reset();
-        document.getElementById('fileAttached').style.display = 'none';
-        document.getElementById('uploadPlaceholder').style.display = 'block';
+        
+        // Resetar arquivo anexado
+        const fileAttached = document.getElementById('fileAttached');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        if (fileAttached && uploadPlaceholder) {
+            fileAttached.style.display = 'none';
+            uploadPlaceholder.style.display = 'block';
+        }
         
         // Limpar sugestões de objetivos
         const sugestoes = document.getElementById('sugestoes-objetivos');
-        sugestoes.style.display = 'none';
-        sugestoes.innerHTML = '';
+        if (sugestoes) {
+            sugestoes.style.display = 'none';
+            sugestoes.innerHTML = '';
+        }
+        
+        // Ocultar download section
+        const downloadSection = document.getElementById('downloadSection');
+        if (downloadSection) {
+            downloadSection.classList.remove('show');
+            downloadSection.style.display = 'none';
+        }
         
         // Scroll para o topo do formulário
         document.querySelector('.contact-form-container').scrollIntoView({ 
@@ -149,68 +178,70 @@ async function iniciarDemo() {
             block: 'start' 
         });
         
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('Iniciando preenchimento dos campos...');
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // 1. Informações Pessoais
         destacarSecao('.form-section:nth-of-type(1)');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 400));
         
         await digitarTexto(
             document.getElementById('nome_peticao'), 
             dadosDemo.nome_peticao, 
-            80
+            60
         );
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 200));
         
         await digitarTexto(
             document.getElementById('clube'), 
             dadosDemo.clube, 
-            80
+            60
         );
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 200));
         
         await digitarTexto(
             document.getElementById('competicao'), 
             dadosDemo.competicao, 
             60
         );
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 400));
         
         // 2. Detalhes da Acusação
         destacarSecao('.form-section:nth-of-type(2)');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 400));
         
         await digitarTexto(
             document.getElementById('acusacao'), 
             dadosDemo.acusacao, 
-            60
+            50
         );
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise(resolve => setTimeout(resolve, 300));
         
         await digitarTexto(
             document.getElementById('contexto'), 
             dadosDemo.contexto, 
             40
         );
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 400));
         
         // 3. Objetivos da Defesa
         destacarSecao('.form-section:nth-of-type(3)');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 400));
         
         await digitarTexto(
             document.getElementById('pedidos'), 
             dadosDemo.pedidos, 
             50
         );
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 400));
         
         // 4. Upload de Arquivo
         destacarSecao('.form-section:nth-of-type(4)');
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 400));
         
         await simularUploadDemo();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // 5. Finalizar demonstração
         document.querySelectorAll('.form-section').forEach(section => {
@@ -227,15 +258,17 @@ async function iniciarDemo() {
         setTimeout(() => {
             submitBtn.style.transform = 'scale(1)';
             submitBtn.style.boxShadow = 'none';
-        }, 1000);
+        }, 800);
+        
+        console.log('Demonstração concluída com sucesso!');
         
     } catch (error) {
         console.error('Erro na demonstração:', error);
     } finally {
-        // Reabilitar botões
-        demoBtn.disabled = false;
+        // Reabilitar botão
         submitBtn.disabled = false;
-        demoBtn.textContent = '🎬 Demonstração Automática';
+        submitBtn.textContent = 'Gerar Petição com Justinho';
+        console.log('Botão reabilitado');
     }
 }
 
@@ -314,7 +347,7 @@ function buscarObjetivosIA() {
 
 /**
  * Função para simular download de arquivos
- * @param {string} tipo - Tipo do arquivo ('docx' ou 'pdf')
+ * @param {string} tipo - Tipo do arquivo ('pdf')
  */
 function simularDownload(tipo) {
     alert(`Download do arquivo ${tipo.toUpperCase()} iniciado!\n\n(Em uma apresentação real, o arquivo seria baixado automaticamente)`);
@@ -391,17 +424,23 @@ function validarFormulario() {
     ];
 
     for (let campo of campos) {
-        const valor = document.getElementById(campo).value.trim();
+        const elemento = document.getElementById(campo);
+        if (!elemento) {
+            console.error(`Campo ${campo} não encontrado!`);
+            continue;
+        }
+        
+        const valor = elemento.value.trim();
         if (!valor) {
             alert(`Por favor, preencha o campo "${document.querySelector(`label[for="${campo}"]`).textContent.replace(' *', '')}".`);
-            document.getElementById(campo).focus();
+            elemento.focus();
             return false;
         }
     }
     
     // Verificar se há arquivo anexado
     const fileAttached = document.getElementById('fileAttached');
-    if (fileAttached.style.display === 'none') {
+    if (!fileAttached || fileAttached.style.display === 'none') {
         alert('Por favor, anexe o documento da intimação.');
         return false;
     }
@@ -414,33 +453,53 @@ function validarFormulario() {
  * Simula o comportamento da API do Gemini
  */
 function processarPeticao() {
+    console.log('Função processarPeticao chamada');
+    
     const submitBtn = document.getElementById('submitBtn');
     const downloadSection = document.getElementById('downloadSection');
     
-    // Validação
-    if (!validarFormulario()) {
+    if (!submitBtn) {
+        console.error('Botão submit não encontrado!');
         return;
     }
+    
+    console.log('Iniciando validação...');
+    
+    // Validação
+    if (!validarFormulario()) {
+        console.log('Validação falhou');
+        return;
+    }
+    
+    console.log('Validação passou, iniciando processamento...');
 
     // Simular processamento
     submitBtn.innerHTML = '🤖 Justinho está trabalhando...';
     submitBtn.disabled = true;
     submitBtn.classList.add('loading');
 
-    // Simular tempo de processamento da IA (3-5 segundos)
-    const tempoProcessamento = Math.random() * 2000 + 3000; // Entre 3-5 segundos
+    // Simular tempo de processamento da IA (1-2 segundos)
+    const tempoProcessamento = Math.random() * 1000 + 1000; // Entre 1-2 segundos
+    
+    console.log(`Tempo de processamento: ${tempoProcessamento}ms`);
     
     setTimeout(() => {
+        console.log('Processamento concluído, mostrando resultado...');
+        
         submitBtn.innerHTML = 'Gerar Petição com Justinho';
         submitBtn.disabled = false;
         submitBtn.classList.remove('loading');
         
         // Mostrar seção de download
-        downloadSection.classList.add('show');
-        downloadSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (downloadSection) {
+            downloadSection.classList.add('show');
+            downloadSection.style.display = 'block';
+            downloadSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            console.log('Seção de download exibida');
+        } else {
+            console.error('Seção de download não encontrada!');
+        }
         
-        // Opcional: Limpar formulário após sucesso
-        // document.getElementById('peticaoForm').reset();
     }, tempoProcessamento);
 }
 
@@ -472,15 +531,50 @@ function adicionarBotaoExemplo() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM carregado, inicializando eventos...');
+    console.log('DOM carregado, inicializando eventos e demonstração...');
+    
+    // Limpar formulário completamente ao carregar
+    document.getElementById('peticaoForm').reset();
+    
+    // Garantir que o arquivo anexado esteja visível inicialmente
+    const fileAttached = document.getElementById('fileAttached');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    if (fileAttached && uploadPlaceholder) {
+        fileAttached.style.display = 'flex';
+        uploadPlaceholder.style.display = 'none';
+    }
+    
+    // Ocultar seção de download
+    const downloadSection = document.getElementById('downloadSection');
+    if (downloadSection) {
+        downloadSection.classList.remove('show');
+        downloadSection.style.display = 'none';
+    }
+    
+    // Limpar sugestões de objetivos
+    const sugestoes = document.getElementById('sugestoes-objetivos');
+    if (sugestoes) {
+        sugestoes.style.display = 'none';
+        sugestoes.innerHTML = '';
+    }
+    
+    // Iniciar demonstração automaticamente após 1 segundo
+    setTimeout(() => {
+        console.log('Iniciando demonstração automática...');
+        iniciarDemo();
+    }, 1000);
     
     // Adicionar evento de submit ao formulário
     const form = document.getElementById('peticaoForm');
     if (form) {
+        console.log('Formulário encontrado, adicionando event listener...');
         form.addEventListener('submit', function(e) {
+            console.log('Submit event disparado');
             e.preventDefault();
             processarPeticao();
         });
+    } else {
+        console.error('Formulário não encontrado!');
     }
 
     // Evento para upload de arquivo
@@ -520,16 +614,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+});
 
-    // Verificar se botão demo existe
-    const demoBtn = document.getElementById('demoBtn');
-    if (demoBtn) {
-        console.log('Botão demo encontrado!');
-    } else {
-        console.error('Botão demo não encontrado!');
+// Também iniciar a demonstração quando a janela carregar completamente
+window.addEventListener('load', function() {
+    console.log('Página carregada completamente, verificando demonstração...');
+    // Pequeno delay adicional para garantir que tudo está carregado
+    setTimeout(() => {
+        // Verificar se a demonstração já não está rodando
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn && !submitBtn.disabled) {
+            console.log('Iniciando demonstração via window.load...');
+            iniciarDemo();
+        }
+    }, 500);
+});
+
+// Iniciar demonstração quando a página ficar visível (para casos de cache)
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        console.log('Página ficou visível, verificando demonstração...');
+        setTimeout(() => {
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn && !submitBtn.disabled) {
+                console.log('Iniciando demonstração via visibilitychange...');
+                iniciarDemo();
+            }
+        }, 500);
     }
-
-    // Opcional: Adicionar botão de exemplo para demonstrações
-    // Descomente a linha abaixo se quiser o botão de preenchimento rápido
-    // adicionarBotaoExemplo();
 });
