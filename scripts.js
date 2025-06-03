@@ -360,10 +360,31 @@ function baixarPDFReal() {
     // Na implementação real, você colocaria o arquivo PDF na pasta 'documents/'
     console.log('Download do PDF real iniciado');
     
-    // Opcional: mostrar mensagem de confirmação
+    // Opcional: remover foco após download
     setTimeout(() => {
-        alert('Download iniciado! O arquivo da petição foi baixado com sucesso.');
-    }, 500);
+        const continuar = confirm('Download realizado com sucesso!\n\nDeseja voltar ao formulário para gerar outra petição?');
+        if (continuar) {
+            // Remover modo foco
+            document.body.classList.remove('page-focus-download');
+            const downloadSection = document.getElementById('downloadSection');
+            const overlay = document.getElementById('downloadOverlay');
+            
+            if (downloadSection) {
+                downloadSection.classList.remove('focused');
+                const contactWarning = downloadSection.querySelector('.contact-warning');
+                if (contactWarning) {
+                    contactWarning.classList.remove('focused');
+                }
+            }
+            
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+            
+            // Scroll de volta ao topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, 1000);
 }
 
 /**
@@ -512,8 +533,33 @@ function processarPeticao() {
         if (downloadSection) {
             downloadSection.classList.add('show');
             downloadSection.style.display = 'block';
-            downloadSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            console.log('Seção de download exibida');
+            
+            // Ativar modo foco total no download
+            setTimeout(() => {
+                document.body.classList.add('page-focus-download');
+                downloadSection.classList.add('focused');
+                
+                const contactWarning = downloadSection.querySelector('.contact-warning');
+                if (contactWarning) {
+                    contactWarning.classList.add('focused');
+                }
+                
+                const overlay = document.getElementById('downloadOverlay');
+                if (overlay) {
+                    overlay.classList.add('active');
+                }
+                
+                // Scroll suave para a seção de download
+                setTimeout(() => {
+                    downloadSection.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }, 300);
+                
+            }, 200);
+            
+            console.log('Seção de download exibida com foco total');
             
             // Vibração de sucesso no mobile
             if (navigator.vibrate) {

@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Overlay para escurecer o fundo -->
+    <div class="download-overlay" id="downloadOverlay"></div>
+    
     <header class="header">
         <div class="logo">
             <a href="#">APITO LEGAL</a>
@@ -21,9 +24,9 @@
         </nav>
         
         <div class="social-icons">
-            <a href="#" aria-label="Instagram"><img src="images/instagram.png" alt="Logo Instagram"></a>
-            <a href="#" aria-label="Twitter"><img src="images/twitter.png" alt="Logo Twitter"></a>
-            <a href="#" aria-label="TikTok"><img src="images/tik-tok.png" alt="Logo TikTok"></a>
+            <a href="#" aria-label="Instagram"><img src="[CAMINHO_PARA_INSTAGRAM_IMG]" alt="Logo Instagram"></a>
+            <a href="#" aria-label="Twitter"><img src="[CAMINHO_PARA_TWITTER_IMG]" alt="Logo Twitter"></a>
+            <a href="#" aria-label="TikTok"><img src="[CAMINHO_PARA_TIKTOK_IMG]" alt="Logo TikTok"></a>
         </div>
     </header>
 
@@ -32,7 +35,7 @@
         <div class="download-section" id="downloadSection">
             <h3>🎉 Sua petição está pronta!</h3>
             <p>O Justinho gerou sua petição de defesa com sucesso.</p>
-            <a href="documents/Defesa_Cleymar_Junior.pdf" class="download-link" download="Peticao_Defesa_Cleymar_Junior.pdf">📄 Baixar em PDF (.pdf)</a>
+            <a href="documents/Defesa_Cleymar_Junior.pdf" class="download-link" download="Peticao_Defesa_Cleymar_Junior.pdf" onclick="baixarPDFReal()">📄 Baixar em PDF (.pdf)</a>
             <div class="contact-warning">
                 <p>⚠️ <strong>Importante:</strong> Após baixar a petição, entre em contato com o nosso núcleo para revisão e acompanhamento jurídico especializado.</p>
             </div>
@@ -146,46 +149,6 @@
                 </form>
             </div>
             
-            <!-- Informações Laterais -->
-            <div class="contact-info">
-                <div class="info-card">
-                    <h3>Como Funciona</h3>
-                    <div class="process-steps">
-                        <div class="step">
-                            <span class="step-number">1</span>
-                            <p>Preencha seus dados pessoais e informações do caso</p>
-                        </div>
-                        <div class="step">
-                            <span class="step-number">2</span>
-                            <p>Descreva detalhadamente a acusação e o contexto</p>
-                        </div>
-                        <div class="step">
-                            <span class="step-number">3</span>
-                            <p>Justinho gera sua petição usando IA especializada</p>
-                        </div>
-                        <div class="step">
-                            <span class="step-number">4</span>
-                            <p>Baixe o documento e revise com um advogado</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mascot-section">
-                <img src="images/justinho.png" alt="Justinho - Mascote do Apito Legal" class="mascot-img">
-                <p>O Justinho está aqui para criar sua defesa!</p>
-            </div>
-                
-                <div class="info-card">
-                    <h3>Vantagens do Justinho</h3>
-                    <ul class="advantages-list">
-                        <li>✅ Geração instantânea de petições</li>
-                        <li>✅ Baseado no CBJD e jurisprudência</li>
-                        <li>✅ Linguagem técnica especializada</li>
-                        <li>✅ Estrutura formal para tribunais</li>
-                        <li>✅ Disponível 24h por dia</li>
-                    </ul>
-                </div>
-            </div>
         </div>
     </div>
 
