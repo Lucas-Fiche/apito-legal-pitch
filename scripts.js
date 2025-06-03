@@ -252,13 +252,19 @@ async function iniciarDemo() {
         // Scroll para o botão de gerar
         scrollParaElemento(document.querySelector('.form-actions'));
         
-        // Animar botão de gerar
-        submitBtn.style.transform = 'scale(1.1)';
-        submitBtn.style.boxShadow = '0 4px 20px rgba(38, 128, 83, 0.4)';
+        // Animar botão de gerar com destaque especial
+        submitBtn.classList.add('btn-attention');
+        
+        // Adicionar vibração no mobile (se suportado)
+        if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200]);
+        }
+        
+        // Remover animação após 10 segundos para não ficar repetitivo
         setTimeout(() => {
-            submitBtn.style.transform = 'scale(1)';
-            submitBtn.style.boxShadow = 'none';
-        }, 800);
+            submitBtn.classList.remove('btn-attention');
+            submitBtn.classList.add('btn-pulse');
+        }, 10000);
         
         console.log('Demonstração concluída com sucesso!');
         
@@ -470,11 +476,16 @@ function processarPeticao() {
         return;
     }
     
+    // Remover animações de destaque
+    submitBtn.classList.remove('btn-attention', 'btn-pulse');
+    
     console.log('Iniciando validação...');
     
     // Validação
     if (!validarFormulario()) {
         console.log('Validação falhou');
+        // Reativar animação se validação falhar
+        submitBtn.classList.add('btn-pulse');
         return;
     }
     
@@ -503,6 +514,11 @@ function processarPeticao() {
             downloadSection.style.display = 'block';
             downloadSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
             console.log('Seção de download exibida');
+            
+            // Vibração de sucesso no mobile
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100, 50, 200]);
+            }
         } else {
             console.error('Seção de download não encontrada!');
         }

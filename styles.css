@@ -503,6 +503,8 @@ body {
     text-decoration: none;
     display: inline-block;
     text-align: center;
+    position: relative;
+    min-height: 50px; /* Altura mínima para mobile */
 }
 
 .btn-primary {
@@ -519,6 +521,12 @@ body {
     opacity: 0.7;
     cursor: not-allowed;
     transform: none;
+    animation: none;
+    box-shadow: none;
+}
+
+.btn-primary:disabled::before {
+    display: none;
 }
 
 .btn-demo {
@@ -608,10 +616,16 @@ body {
     border: 1px solid var(--cor-bordas-form);
 }
 
+.mascot-section .mascot-img {
+    max-width: 180px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
 .mascot-section p {
     color: rgba(255, 255, 255, 0.8);
     font-style: italic;
-    margin: 15px 0 0 0;
+    margin: 0;
 }
 
 .advantages-list {
@@ -692,6 +706,56 @@ body {
     50% { border-color: var(--cor-detalhes); }
 }
 
+@keyframes smooth-scale {
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(38, 128, 83, 0.2);
+    }
+    50% { 
+        transform: scale(1.06);
+        box-shadow: 0 8px 25px rgba(38, 128, 83, 0.6);
+    }
+    100% { 
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(38, 128, 83, 0.2);
+    }
+}
+
+@keyframes smooth-scale-attention {
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(38, 128, 83, 0.3);
+    }
+    50% { 
+        transform: scale(1.08);
+        box-shadow: 0 10px 30px rgba(38, 128, 83, 0.7);
+    }
+    100% { 
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(38, 128, 83, 0.3);
+    }
+}
+
+.btn-pulse {
+    animation: smooth-scale 3s ease-in-out infinite;
+}
+
+.btn-attention {
+    animation: smooth-scale-attention 2.5s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
+}
+
 .typing-effect {
     border-right: 2px solid var(--cor-detalhes);
     animation: blink-caret 1s infinite;
@@ -719,13 +783,13 @@ textarea.typing-effect {
 .loading::after {
     content: '';
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    margin-left: 10px;
-    border: 2px solid transparent;
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-top: 2px solid white;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
 /* ===== EFEITO DE SCROLL (JavaScript necessário) ===== */
@@ -1259,8 +1323,14 @@ textarea.typing-effect {
     .btn {
         width: 100%;
         max-width: none;
-        padding: 12px 20px;
-        font-size: 14px;
+        padding: 16px 20px;
+        font-size: 16px;
+        min-height: 56px; /* Altura mínima maior para mobile */
+        border-radius: 12px;
+    }
+    
+    .btn-attention::before {
+        display: none; /* Remove emoji em mobile também */
     }
     
     /* Info sidebar mobile */
