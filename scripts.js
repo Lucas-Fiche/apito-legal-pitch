@@ -655,40 +655,46 @@ const FormProcessor = {
             return;
         }
         
-        // Mostrar seção
+        // Mostrar seção com animação suave
         downloadSection.classList.add('show');
         downloadSection.style.display = 'block';
         
-        // Ativar modo foco total com animação mais suave
+        // Ativar modo foco total com timing mais fluido
         setTimeout(() => {
             document.body.classList.add('page-focus-download');
-            downloadSection.classList.add('focused');
             
-            const contactWarning = downloadSection.querySelector('.contact-warning');
-            if (contactWarning) {
-                contactWarning.classList.add('focused');
-            }
+            // Delay escalonado para efeitos mais cinematográficos
+            setTimeout(() => {
+                downloadSection.classList.add('focused');
+                
+                const contactWarning = downloadSection.querySelector('.contact-warning');
+                if (contactWarning) {
+                    setTimeout(() => {
+                        contactWarning.classList.add('focused');
+                    }, 300);
+                }
+            }, 400);
             
             const overlay = document.getElementById('downloadOverlay');
             if (overlay) {
                 overlay.classList.add('active');
             }
             
-            // Scroll suave para download com delay maior (agora liberado)
+            // Scroll suave com delay aumentado para melhor fluidez
             setTimeout(() => {
                 downloadSection.scrollIntoView({ 
                     behavior: 'smooth', 
                     block: 'center' 
                 });
-            }, 600);
+            }, 800);
             
-        }, 300);
+        }, 400);
         
         console.log('Seção de download exibida com foco total');
         
-        // Vibração de sucesso
+        // Vibração de sucesso mais elaborada
         if (navigator.vibrate) {
-            navigator.vibrate([100, 50, 100, 50, 200]);
+            navigator.vibrate([100, 50, 100, 50, 200, 100, 300]);
         }
     }
 };
