@@ -1,5 +1,23 @@
-// Dados para a demonstração automática baseados no documento
-const dadosDemo = {
+// ===== CONFIGURAÇÕES E CONSTANTES =====
+const CONFIG = {
+    typing: {
+        velocidadePadrao: 50,
+        velocidadeRapida: 40,
+        velocidadeLenta: 60
+    },
+    delays: {
+        entreSecoes: 400,
+        entreCampos: 200,
+        inicioDemo: 1000,
+        processamento: { min: 1000, max: 2000 }
+    },
+    animacao: {
+        scrollBehavior: 'smooth',
+        scrollBlock: 'center'
+    }
+};
+
+const DADOS_DEMO = {
     nome_peticao: "Cleymar Junior",
     clube: "Atlético Pé de Rato", 
     competicao: "Série D",
@@ -8,300 +26,29 @@ const dadosDemo = {
     pedidos: "Redução da quantidade de jogos suspenso"
 };
 
-/**
- * Função para criar efeito de digitação
- * @param {HTMLElement} elemento - Campo a ser preenchido
- * @param {string} texto - Texto a ser digitado
- * @param {number} velocidade - Velocidade de digitação (ms)
- * @returns {Promise} - Promise que resolve quando termina de digitar
- */
-function digitarTexto(elemento, texto, velocidade = 50) {
-    return new Promise((resolve) => {
-        elemento.value = '';
-        elemento.classList.add('field-highlight');
-        
-        // Para textarea, remover o efeito typing que causa problema com quebra de linha
-        if (elemento.tagName.toLowerCase() === 'textarea') {
-            elemento.classList.remove('typing-effect');
-        } else {
-            elemento.classList.add('typing-effect');
-        }
-        
-        let i = 0;
-        const timer = setInterval(() => {
-            elemento.value += texto.charAt(i);
-            
-            // Para textarea, fazer scroll para mostrar o texto sendo digitado
-            if (elemento.tagName.toLowerCase() === 'textarea') {
-                elemento.scrollTop = elemento.scrollHeight;
-            }
-            
-            i++;
-            
-            if (i >= texto.length) {
-                clearInterval(timer);
-                elemento.classList.remove('typing-effect');
-                setTimeout(() => {
-                    elemento.classList.remove('field-highlight');
-                    resolve();
-                }, 500);
-            }
-        }, velocidade);
-    });
-}
-
-/**
- * Função para scroll suave até o elemento
- * @param {HTMLElement} elemento - Elemento para fazer scroll
- */
-function scrollParaElemento(elemento) {
-    elemento.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'center' 
-    });
-}
-
-/**
- * Função para destacar seção
- * @param {string} sectionSelector - Seletor da seção
- */
-function destacarSecao(sectionSelector) {
-    // Remove destaque anterior
-    document.querySelectorAll('.form-section').forEach(section => {
-        section.style.transform = 'scale(1)';
-        section.style.boxShadow = 'none';
-    });
-    
-    // Adiciona destaque à seção atual
-    const secao = document.querySelector(sectionSelector);
-    if (secao) {
-        secao.style.transform = 'scale(1.02)';
-        secao.style.boxShadow = '0 4px 20px rgba(58, 150, 206, 0.2)';
-        secao.style.transition = 'all 0.3s ease';
-        scrollParaElemento(secao);
-    }
-}
-
-/**
- * Função para simular upload de arquivo durante demo
- */
-function simularUploadDemo() {
-    return new Promise((resolve) => {
-        const fileAttached = document.getElementById('fileAttached');
-        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-        const btnUpload = document.querySelector('.btn-upload');
-        
-        // Primeiro ocultar arquivo existente e mostrar placeholder
-        fileAttached.style.display = 'none';
-        uploadPlaceholder.style.display = 'block';
-        
-        // Animação de upload
-        btnUpload.textContent = 'Carregando arquivo...';
-        btnUpload.disabled = true;
-        
-        setTimeout(() => {
-            // Atualizar informações do arquivo
-            fileAttached.querySelector('.file-name').textContent = 'Intimacao_Cleymar_Junior.pdf';
-            fileAttached.querySelector('.file-size').textContent = '156 KB';
-            
-            // Mostrar arquivo anexado
-            uploadPlaceholder.style.display = 'none';
-            fileAttached.style.display = 'flex';
-            btnUpload.textContent = 'Alterar Arquivo';
-            btnUpload.disabled = false;
-            
-            // Efeito de sucesso
-            fileAttached.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                fileAttached.style.transform = 'scale(1)';
-                resolve();
-            }, 300);
-        }, 800);
-    });
-}
-
-/**
- * Função principal da demonstração automática
- */
-async function iniciarDemo() {
-    console.log('Função iniciarDemo chamada');
-    
-    const submitBtn = document.getElementById('submitBtn');
-    
-    // Verificar se o botão existe
-    if (!submitBtn) {
-        console.error('Botão submit não encontrado!');
-        return;
-    }
-    
-    // Verificar se já está executando
-    if (submitBtn.disabled) {
-        console.log('Demonstração já está rodando, ignorando...');
-        return;
-    }
-    
-    // Desabilitar botão
-    submitBtn.disabled = true;
-    submitBtn.textContent = '🤖 Carregando demonstração...';
-    
-    try {
-        console.log('Iniciando limpeza do formulário...');
-        
-        // Limpar formulário
-        document.getElementById('peticaoForm').reset();
-        
-        // Resetar arquivo anexado
-        const fileAttached = document.getElementById('fileAttached');
-        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-        if (fileAttached && uploadPlaceholder) {
-            fileAttached.style.display = 'none';
-            uploadPlaceholder.style.display = 'block';
-        }
-        
-        // Limpar sugestões de objetivos
-        const sugestoes = document.getElementById('sugestoes-objetivos');
-        if (sugestoes) {
-            sugestoes.style.display = 'none';
-            sugestoes.innerHTML = '';
-        }
-        
-        // Ocultar download section
-        const downloadSection = document.getElementById('downloadSection');
-        if (downloadSection) {
-            downloadSection.classList.remove('show');
-            downloadSection.style.display = 'none';
-        }
-        
-        // Scroll para o topo do formulário
-        document.querySelector('.contact-form-container').scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
-        });
-        
-        console.log('Iniciando preenchimento dos campos...');
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // 1. Informações Pessoais
-        destacarSecao('.form-section:nth-of-type(1)');
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        await digitarTexto(
-            document.getElementById('nome_peticao'), 
-            dadosDemo.nome_peticao, 
-            60
-        );
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        await digitarTexto(
-            document.getElementById('clube'), 
-            dadosDemo.clube, 
-            60
-        );
-        await new Promise(resolve => setTimeout(resolve, 200));
-        
-        await digitarTexto(
-            document.getElementById('competicao'), 
-            dadosDemo.competicao, 
-            60
-        );
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        // 2. Detalhes da Acusação
-        destacarSecao('.form-section:nth-of-type(2)');
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        await digitarTexto(
-            document.getElementById('acusacao'), 
-            dadosDemo.acusacao, 
-            50
-        );
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        await digitarTexto(
-            document.getElementById('contexto'), 
-            dadosDemo.contexto, 
-            40
-        );
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        // 3. Objetivos da Defesa
-        destacarSecao('.form-section:nth-of-type(3)');
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        await digitarTexto(
-            document.getElementById('pedidos'), 
-            dadosDemo.pedidos, 
-            50
-        );
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        // 4. Upload de Arquivo
-        destacarSecao('.form-section:nth-of-type(4)');
-        await new Promise(resolve => setTimeout(resolve, 400));
-        
-        await simularUploadDemo();
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // 5. Finalizar demonstração
-        document.querySelectorAll('.form-section').forEach(section => {
-            section.style.transform = 'scale(1)';
-            section.style.boxShadow = 'none';
-        });
-        
-        // Scroll para o botão de gerar
-        scrollParaElemento(document.querySelector('.form-actions'));
-        
-        // Animar botão de gerar com destaque especial
-        submitBtn.classList.add('btn-attention');
-        
-        // Adicionar vibração no mobile (se suportado)
-        if (navigator.vibrate) {
-            navigator.vibrate([200, 100, 200]);
-        }
-        
-        // Remover animação após 10 segundos para não ficar repetitivo
-        setTimeout(() => {
-            submitBtn.classList.remove('btn-attention');
-            submitBtn.classList.add('btn-pulse');
-        }, 10000);
-        
-        console.log('Demonstração concluída com sucesso!');
-        
-    } catch (error) {
-        console.error('Erro na demonstração:', error);
-    } finally {
-        // Reabilitar botão
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Gerar Petição com Justinho';
-        console.log('Botão reabilitado');
-    }
-}
-
-// Objetivos pré-definidos baseados em diferentes tipos de acusações
-const objetivosPorTipo = {
-    'violencia': [
+const OBJETIVOS_POR_TIPO = {
+    violencia: [
         'Desclassificação da conduta para conduta menos grave',
         'Aplicação de advertência simples',
         'Arquivamento por ausência de dolo',
         'Conversão da suspensão em multa',
         'Realização de audiência de oitiva pessoal'
     ],
-    'doping': [
+    doping: [
         'Comprovação de uso terapêutico autorizado',
         'Demonstração de contaminação cruzada',
         'Redução da penalidade por colaboração',
         'Suspensão condicional da pena',
         'Arquivamento por vício processual'
     ],
-    'financeiro': [
+    financeiro: [
         'Parcelamento do débito em aberto',
         'Redução do valor da multa aplicada',
         'Comprovação de adimplemento posterior',
         'Suspensão da penalidade até regularização',
         'Conversão da punição em advertência'
     ],
-    'padrao': [
+    padrao: [
         'Arquivamento da denúncia por ausência de provas',
         'Desclassificação da infração para conduta menos grave',
         'Aplicação de advertência simples',
@@ -312,32 +59,720 @@ const objetivosPorTipo = {
     ]
 };
 
-/**
- * Função para buscar objetivos da IA
- * Simula o comportamento da API do Gemini
- */
-function buscarObjetivosIA() {
-    const btn = document.getElementById('helpBtn');
-    const div = document.getElementById('sugestoes-objetivos');
-    const acusacao = document.getElementById('acusacao').value.toLowerCase();
+const TIPOS_ARQUIVO_ACEITOS = [
+    'application/pdf', 
+    'application/msword', 
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'image/jpeg', 
+    'image/jpg', 
+    'image/png'
+];
 
-    btn.disabled = true;
-    btn.textContent = "Justinho está pensando...";
+// ===== UTILITÁRIOS =====
+const Utils = {
+    /**
+     * Aguarda um tempo específico
+     * @param {number} ms - Tempo em milissegundos
+     * @returns {Promise}
+     */
+    delay: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
 
-    // Simular processamento da IA
-    setTimeout(() => {
-        let objetivos = objetivosPorTipo.padrao;
+    /**
+     * Scroll suave para elemento (com controle inteligente)
+     * @param {HTMLElement} elemento 
+     * @param {boolean} force - Forçar scroll mesmo durante demo
+     */
+    scrollTo: (elemento, force = false) => {
+        if (elemento && (!Demo.isRunning || force)) {
+            elemento.scrollIntoView({ 
+                behavior: CONFIG.animacao.scrollBehavior, 
+                block: CONFIG.animacao.scrollBlock 
+            });
+        }
+    },
 
-        // Detectar tipo de acusação baseado em palavras-chave
-        if (acusacao.includes('agressão') || acusacao.includes('violência') || acusacao.includes('briga') || acusacao.includes('violenta')) {
-            objetivos = objetivosPorTipo.violencia;
-        } else if (acusacao.includes('doping') || acusacao.includes('substância') || acusacao.includes('dopagem')) {
-            objetivos = objetivosPorTipo.doping;
-        } else if (acusacao.includes('financeiro') || acusacao.includes('pagamento') || acusacao.includes('débito')) {
-            objetivos = objetivosPorTipo.financeiro;
+    /**
+     * Scroll progressivo durante demo (mais suave)
+     * @param {HTMLElement} elemento 
+     */
+    scrollToProgressive: (elemento) => {
+        if (elemento && Demo.isRunning) {
+            elemento.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    },
+
+    /**
+     * Remove todas as classes de uma lista de elementos
+     * @param {NodeList} elementos 
+     * @param {string} classe 
+     */
+    removeClassFromAll: (elementos, classe) => {
+        elementos.forEach(el => el.classList.remove(classe));
+    },
+
+    /**
+     * Gera tempo aleatório entre min e max
+     * @param {number} min 
+     * @param {number} max 
+     * @returns {number}
+     */
+    randomTime: (min, max) => Math.random() * (max - min) + min,
+
+    /**
+     * Formata tamanho de arquivo
+     * @param {number} bytes 
+     * @returns {string}
+     */
+    formatFileSize: (bytes) => {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(0)) + ' ' + sizes[i];
+    }
+};
+
+// ===== EFEITOS VISUAIS =====
+const Effects = {
+    /**
+     * Efeito de digitação em campo
+     * @param {HTMLElement} elemento 
+     * @param {string} texto 
+     * @param {number} velocidade 
+     * @returns {Promise}
+     */
+    async digitarTexto(elemento, texto, velocidade = CONFIG.typing.velocidadePadrao) {
+        return new Promise((resolve) => {
+            elemento.value = '';
+            elemento.classList.add('field-highlight');
+            
+            const isTextarea = elemento.tagName.toLowerCase() === 'textarea';
+            if (!isTextarea) {
+                elemento.classList.add('typing-effect', 'input');
+            } else {
+                elemento.classList.add('typing-effect', 'textarea');
+                // Ativar microfone se for campo de acusação ou contexto
+                this.ativarMicrofone(elemento.id);
+            }
+            
+            let i = 0;
+            const timer = setInterval(() => {
+                elemento.value += texto.charAt(i);
+                
+                if (isTextarea) {
+                    elemento.scrollTop = elemento.scrollHeight;
+                }
+                
+                i++;
+                
+                if (i >= texto.length) {
+                    clearInterval(timer);
+                    elemento.classList.remove('typing-effect', 'input', 'textarea');
+                    this.desativarMicrofone(elemento.id);
+                    setTimeout(() => {
+                        elemento.classList.remove('field-highlight');
+                        resolve();
+                    }, 500);
+                }
+            }, velocidade);
+        });
+    },
+
+    /**
+     * Ativa animação do microfone
+     * @param {string} elementoId 
+     */
+    ativarMicrofone(elementoId) {
+        let micId = '';
+        if (elementoId === 'acusacao') {
+            micId = 'micAcusacao';
+        } else if (elementoId === 'contexto') {
+            micId = 'micContexto';
+        }
+        
+        if (micId) {
+            const mic = document.getElementById(micId);
+            if (mic) {
+                mic.classList.add('active');
+            }
+        }
+    },
+
+    /**
+     * Desativa animação do microfone
+     * @param {string} elementoId 
+     */
+    desativarMicrofone(elementoId) {
+        let micId = '';
+        if (elementoId === 'acusacao') {
+            micId = 'micAcusacao';
+        } else if (elementoId === 'contexto') {
+            micId = 'micContexto';
+        }
+        
+        if (micId) {
+            const mic = document.getElementById(micId);
+            if (mic) {
+                mic.classList.remove('active');
+            }
+        }
+    },
+
+    /**
+     * Destaca uma seção do formulário (com scroll progressivo durante demo)
+     * @param {string} sectionSelector 
+     */
+    destacarSecao(sectionSelector) {
+        // Remove destaque anterior
+        const secoes = document.querySelectorAll('.form-section');
+        secoes.forEach(section => {
+            section.style.transform = 'scale(1)';
+            section.style.boxShadow = 'none';
+            section.style.transition = 'all 0.3s ease';
+        });
+        
+        // Adiciona destaque à seção atual
+        const secao = document.querySelector(sectionSelector);
+        if (secao) {
+            secao.style.transform = 'scale(1.02)';
+            secao.style.boxShadow = '0 4px 20px rgba(58, 150, 206, 0.2)';
+            
+            // Scroll progressivo durante demo
+            if (Demo.isRunning) {
+                Utils.scrollToProgressive(secao);
+            } else {
+                Utils.scrollTo(secao);
+            }
+        }
+    },
+
+    /**
+     * Remove todos os destaques
+     */
+    removerDestaques() {
+        const secoes = document.querySelectorAll('.form-section');
+        secoes.forEach(section => {
+            section.style.transform = 'scale(1)';
+            section.style.boxShadow = 'none';
+        });
+    }
+};
+
+// ===== GERENCIAMENTO DE ARQUIVOS =====
+const FileManager = {
+    /**
+     * Valida arquivo selecionado
+     * @param {File} file 
+     * @returns {boolean}
+     */
+    validarArquivo(file) {
+        if (!TIPOS_ARQUIVO_ACEITOS.includes(file.type)) {
+            alert('Tipo de arquivo não suportado. Use PDF, DOC, DOCX, JPG ou PNG.');
+            return false;
+        }
+        
+        if (file.size > 10 * 1024 * 1024) {
+            alert('Arquivo muito grande. Tamanho máximo: 10MB.');
+            return false;
+        }
+        
+        return true;
+    },
+
+    /**
+     * Atualiza interface com arquivo anexado
+     * @param {File} file 
+     */
+    mostrarArquivo(file) {
+        const fileAttached = document.getElementById('fileAttached');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const btnUpload = document.querySelector('.btn-upload');
+        
+        if (!fileAttached || !uploadPlaceholder || !btnUpload) return;
+        
+        const fileName = file.name;
+        const fileSize = Utils.formatFileSize(file.size);
+        
+        fileAttached.querySelector('.file-name').textContent = fileName;
+        fileAttached.querySelector('.file-size').textContent = fileSize;
+        
+        uploadPlaceholder.style.display = 'none';
+        fileAttached.style.display = 'flex';
+        btnUpload.textContent = 'Alterar Arquivo';
+        
+        // Efeito visual
+        fileAttached.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            fileAttached.style.transform = 'scale(1)';
+        }, 300);
+    },
+
+    /**
+     * Simula upload durante demonstração
+     * @returns {Promise}
+     */
+    async simularUpload() {
+        const fileAttached = document.getElementById('fileAttached');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const btnUpload = document.querySelector('.btn-upload');
+        
+        if (!fileAttached || !uploadPlaceholder || !btnUpload) return;
+        
+        // Mostrar estado de carregamento
+        fileAttached.style.display = 'none';
+        uploadPlaceholder.style.display = 'block';
+        btnUpload.textContent = 'Carregando arquivo...';
+        btnUpload.disabled = true;
+        
+        await Utils.delay(800);
+        
+        // Mostrar arquivo carregado
+        fileAttached.querySelector('.file-name').textContent = 'Intimacao_Cleymar_Junior.pdf';
+        fileAttached.querySelector('.file-size').textContent = '156 KB';
+        
+        uploadPlaceholder.style.display = 'none';
+        fileAttached.style.display = 'flex';
+        btnUpload.textContent = 'Alterar Arquivo';
+        btnUpload.disabled = false;
+        
+        // Efeito de sucesso
+        fileAttached.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            fileAttached.style.transform = 'scale(1)';
+        }, 300);
+    },
+
+    /**
+     * Remove arquivo anexado
+     */
+    removerArquivo() {
+        if (!confirm('Tem certeza que deseja remover este arquivo?')) return;
+        
+        const fileAttached = document.getElementById('fileAttached');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const btnUpload = document.querySelector('.btn-upload');
+        const anexoInput = document.getElementById('anexo');
+        
+        if (fileAttached) fileAttached.style.display = 'none';
+        if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
+        if (btnUpload) btnUpload.textContent = 'Selecionar Arquivo';
+        if (anexoInput) anexoInput.value = '';
+    }
+};
+
+// ===== VALIDAÇÃO DO FORMULÁRIO =====
+const FormValidator = {
+    /**
+     * Valida todos os campos obrigatórios
+     * @returns {boolean}
+     */
+    validarCampos() {
+        const camposObrigatorios = [
+            'nome_peticao',
+            'clube', 
+            'competicao',
+            'acusacao',
+            'contexto',
+            'pedidos'
+        ];
+
+        for (const campo of camposObrigatorios) {
+            const elemento = document.getElementById(campo);
+            if (!elemento) {
+                console.error(`Campo ${campo} não encontrado!`);
+                continue;
+            }
+            
+            const valor = elemento.value.trim();
+            if (!valor) {
+                const label = document.querySelector(`label[for="${campo}"]`);
+                const nomeAmigavel = label ? label.textContent.replace(' *', '') : campo;
+                alert(`Por favor, preencha o campo "${nomeAmigavel}".`);
+                elemento.focus();
+                return false;
+            }
+        }
+        
+        return this.validarArquivo();
+    },
+
+    /**
+     * Valida se há arquivo anexado
+     * @returns {boolean}
+     */
+    validarArquivo() {
+        const fileAttached = document.getElementById('fileAttached');
+        if (!fileAttached || fileAttached.style.display === 'none') {
+            alert('Por favor, anexe o documento da intimação.');
+            return false;
+        }
+        return true;
+    }
+};
+
+// ===== DEMONSTRAÇÃO AUTOMÁTICA =====
+const Demo = {
+    // Flag para controlar se a demo está rodando
+    isRunning: false,
+
+    /**
+     * Limpa o formulário completamente
+     */
+    limparFormulario() {
+        const form = document.getElementById('peticaoForm');
+        if (form) form.reset();
+        
+        // Resetar arquivo anexado
+        const fileAttached = document.getElementById('fileAttached');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        if (fileAttached) fileAttached.style.display = 'none';
+        if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
+        
+        // Ocultar download section
+        const downloadSection = document.getElementById('downloadSection');
+        if (downloadSection) {
+            downloadSection.classList.remove('show');
+            downloadSection.style.display = 'none';
+        }
+        
+        // Remover foco da página
+        document.body.classList.remove('page-focus-download');
+        const overlay = document.getElementById('downloadOverlay');
+        if (overlay) overlay.classList.remove('active');
+    },
+
+    /**
+     * Executa demonstração automática completa
+     */
+    async executar() {
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (!submitBtn || submitBtn.disabled) {
+            console.log('Demonstração já está rodando ou botão não encontrado');
+            return;
+        }
+        
+        console.log('Iniciando demonstração automática...');
+        
+        // Marcar que demo está rodando (bloqueia scrolls automáticos)
+        this.isRunning = true;
+        
+        // Desabilitar botão
+        submitBtn.disabled = true;
+        submitBtn.textContent = '🤖 Carregando demonstração...';
+        
+        try {
+            // Limpar e preparar
+            this.limparFormulario();
+            
+            await Utils.delay(500);
+            
+            // Preencher campos por seção (sem scroll automático)
+            await this.preencherInformacoesPessoais();
+            await this.preencherDetalhesAcusacao();
+            await this.preencherObjetivos();
+            await this.simularUpload();
+            
+            // Finalizar
+            Effects.removerDestaques();
+            
+            // Scroll final suave para o botão (agora com força)
+            setTimeout(() => {
+                const formActions = document.querySelector('.form-actions');
+                if (formActions) {
+                    Utils.scrollTo(formActions, true); // Force = true
+                }
+            }, 500);
+            
+            // Destacar botão
+            submitBtn.classList.add('btn-attention');
+            
+            // Vibração no mobile
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+            
+            // Remover animação após 10 segundos
+            setTimeout(() => {
+                submitBtn.classList.remove('btn-attention');
+                submitBtn.classList.add('btn-pulse');
+            }, 10000);
+            
+            console.log('Demonstração concluída com sucesso!');
+            
+        } catch (error) {
+            console.error('Erro na demonstração:', error);
+        } finally {
+            // Reabilitar botão e liberar scrolls
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Gerar Petição com Justinho';
+            this.isRunning = false;
+        }
+    },
+
+    /**
+     * Preenche seção de informações pessoais
+     */
+    async preencherInformacoesPessoais() {
+        Effects.destacarSecao('.form-section:nth-of-type(1)');
+        await Utils.delay(CONFIG.delays.entreSecoes);
+        
+        await Effects.digitarTexto(
+            document.getElementById('nome_peticao'), 
+            DADOS_DEMO.nome_peticao, 
+            CONFIG.typing.velocidadeLenta
+        );
+        await Utils.delay(CONFIG.delays.entreCampos);
+        
+        await Effects.digitarTexto(
+            document.getElementById('clube'), 
+            DADOS_DEMO.clube, 
+            CONFIG.typing.velocidadeLenta
+        );
+        await Utils.delay(CONFIG.delays.entreCampos);
+        
+        await Effects.digitarTexto(
+            document.getElementById('competicao'), 
+            DADOS_DEMO.competicao, 
+            CONFIG.typing.velocidadeLenta
+        );
+        await Utils.delay(CONFIG.delays.entreSecoes);
+    },
+
+    /**
+     * Preenche seção de detalhes da acusação
+     */
+    async preencherDetalhesAcusacao() {
+        Effects.destacarSecao('.form-section:nth-of-type(2)');
+        await Utils.delay(CONFIG.delays.entreSecoes + 200); // Tempo extra para scroll
+        
+        await Effects.digitarTexto(
+            document.getElementById('acusacao'), 
+            DADOS_DEMO.acusacao, 
+            CONFIG.typing.velocidadePadrao
+        );
+        await Utils.delay(400); // Delay extra para acompanhar
+        
+        await Effects.digitarTexto(
+            document.getElementById('contexto'), 
+            DADOS_DEMO.contexto, 
+            CONFIG.typing.velocidadeRapida
+        );
+        await Utils.delay(CONFIG.delays.entreSecoes);
+    },
+
+    /**
+     * Preenche seção de objetivos
+     */
+    async preencherObjetivos() {
+        Effects.destacarSecao('.form-section:nth-of-type(3)');
+        await Utils.delay(CONFIG.delays.entreSecoes + 200); // Tempo extra para scroll
+        
+        await Effects.digitarTexto(
+            document.getElementById('pedidos'), 
+            DADOS_DEMO.pedidos, 
+            CONFIG.typing.velocidadePadrao
+        );
+        await Utils.delay(CONFIG.delays.entreSecoes);
+    },
+
+    /**
+     * Simula upload de arquivo
+     */
+    async simularUpload() {
+        Effects.destacarSecao('.form-section:nth-of-type(4)');
+        await Utils.delay(CONFIG.delays.entreSecoes + 200); // Tempo extra para scroll
+        
+        await FileManager.simularUpload();
+        await Utils.delay(500);
+    }
+};
+
+// ===== PROCESSAMENTO DO FORMULÁRIO =====
+const FormProcessor = {
+    /**
+     * Processa o formulário e gera petição
+     */
+    async processar() {
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (!submitBtn) {
+            console.error('Botão submit não encontrado!');
+            return;
+        }
+        
+        // Remover animações de destaque
+        submitBtn.classList.remove('btn-attention', 'btn-pulse');
+        
+        console.log('Iniciando validação...');
+        
+        // Validação
+        if (!FormValidator.validarCampos()) {
+            console.log('Validação falhou');
+            submitBtn.classList.add('btn-pulse');
+            return;
+        }
+        
+        console.log('Validação passou, iniciando processamento...');
+
+        // Estado de carregamento
+        submitBtn.innerHTML = '🤖 Justinho está trabalhando...';
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+
+        // Simular processamento da IA
+        const tempoProcessamento = Utils.randomTime(
+            CONFIG.delays.processamento.min, 
+            CONFIG.delays.processamento.max
+        );
+        
+        console.log(`Tempo de processamento: ${tempoProcessamento}ms`);
+        
+        await Utils.delay(tempoProcessamento);
+        
+        console.log('Processamento concluído, mostrando resultado...');
+        
+        // Restaurar botão
+        submitBtn.innerHTML = 'Gerar Petição com Justinho';
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        
+        // Mostrar resultado
+        this.mostrarResultado();
+    },
+
+    /**
+     * Exibe seção de download com foco total
+     */
+    mostrarResultado() {
+        const downloadSection = document.getElementById('downloadSection');
+        
+        if (!downloadSection) {
+            console.error('Seção de download não encontrada!');
+            return;
+        }
+        
+        // Mostrar seção
+        downloadSection.classList.add('show');
+        downloadSection.style.display = 'block';
+        
+        // Ativar modo foco total com animação mais suave
+        setTimeout(() => {
+            document.body.classList.add('page-focus-download');
+            downloadSection.classList.add('focused');
+            
+            const contactWarning = downloadSection.querySelector('.contact-warning');
+            if (contactWarning) {
+                contactWarning.classList.add('focused');
+            }
+            
+            const overlay = document.getElementById('downloadOverlay');
+            if (overlay) {
+                overlay.classList.add('active');
+            }
+            
+            // Scroll suave para download com delay maior (agora liberado)
+            setTimeout(() => {
+                downloadSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 600);
+            
+        }, 300);
+        
+        console.log('Seção de download exibida com foco total');
+        
+        // Vibração de sucesso
+        if (navigator.vibrate) {
+            navigator.vibrate([100, 50, 100, 50, 200]);
+        }
+    }
+};
+
+// ===== DOWNLOAD E NAVEGAÇÃO =====
+const DownloadManager = {
+    /**
+     * Executa download do PDF
+     */
+    baixarPDF() {
+        console.log('Download do PDF iniciado');
+        
+        // Confirmar ação após download
+        setTimeout(() => {
+            const continuar = confirm(
+                'Download realizado com sucesso!\n\nDeseja voltar ao formulário para gerar outra petição?'
+            );
+            
+            if (continuar) {
+                this.voltarAoFormulario();
+            }
+        }, 1000);
+    },
+
+    /**
+     * Remove foco e volta ao formulário
+     */
+    voltarAoFormulario() {
+        // Remover modo foco
+        document.body.classList.remove('page-focus-download');
+        
+        const downloadSection = document.getElementById('downloadSection');
+        const overlay = document.getElementById('downloadOverlay');
+        
+        if (downloadSection) {
+            downloadSection.classList.remove('focused');
+            const contactWarning = downloadSection.querySelector('.contact-warning');
+            if (contactWarning) {
+                contactWarning.classList.remove('focused');
+            }
+        }
+        
+        if (overlay) {
+            overlay.classList.remove('active');
+        }
+        
+        // Scroll para o topo
+        window.scrollTo({ top: 0, behavior: CONFIG.animacao.scrollBehavior });
+    }
+};
+
+// ===== SUGESTÕES DE IA (FUNCIONALIDADE OCULTA) =====
+const AIHelper = {
+    /**
+     * Busca objetivos baseados no tipo de acusação
+     */
+    async buscarObjetivos() {
+        const btn = document.getElementById('helpBtn');
+        const div = document.getElementById('sugestoes-objetivos');
+        const acusacao = document.getElementById('acusacao').value.toLowerCase();
+
+        if (!btn || !div) return;
+
+        btn.disabled = true;
+        btn.textContent = "Justinho está pensando...";
+
+        await Utils.delay(2000);
+
+        let objetivos = OBJETIVOS_POR_TIPO.padrao;
+
+        // Detectar tipo de acusação
+        if (acusacao.includes('agressão') || acusacao.includes('violência') || 
+            acusacao.includes('briga') || acusacao.includes('violenta')) {
+            objetivos = OBJETIVOS_POR_TIPO.violencia;
+        } else if (acusacao.includes('doping') || acusacao.includes('substância') || 
+                   acusacao.includes('dopagem')) {
+            objetivos = OBJETIVOS_POR_TIPO.doping;
+        } else if (acusacao.includes('financeiro') || acusacao.includes('pagamento') || 
+                   acusacao.includes('débito')) {
+            objetivos = OBJETIVOS_POR_TIPO.financeiro;
         }
 
-        let html = `<strong>Objetivos sugeridos com base no seu caso:</strong><ul style="margin-top:5px;padding-left:20px;">`;
+        let html = `<strong>Objetivos sugeridos com base no seu caso:</strong>
+                    <ul style="margin-top:5px;padding-left:20px;">`;
         objetivos.forEach(objetivo => {
             html += `<li>${objetivo}</li>`;
         });
@@ -348,367 +783,209 @@ function buscarObjetivosIA() {
 
         btn.disabled = false;
         btn.textContent = "❓ Quer ajuda para saber quais são possíveis objetivos?";
-    }, 2000); // 2 segundos para simular processamento
-}
+    }
+};
 
-/**
- * Função para download real do PDF
- * Cria um blob com o conteúdo do PDF e força o download
- */
-function baixarPDFReal() {
-    // Simulação de sucesso para a demonstração
-    // Na implementação real, você colocaria o arquivo PDF na pasta 'documents/'
-    console.log('Download do PDF real iniciado');
-    
-    // Opcional: remover foco após download
-    setTimeout(() => {
-        const continuar = confirm('Download realizado com sucesso!\n\nDeseja voltar ao formulário para gerar outra petição?');
-        if (continuar) {
-            // Remover modo foco
-            document.body.classList.remove('page-focus-download');
-            const downloadSection = document.getElementById('downloadSection');
-            const overlay = document.getElementById('downloadOverlay');
-            
-            if (downloadSection) {
-                downloadSection.classList.remove('focused');
-                const contactWarning = downloadSection.querySelector('.contact-warning');
-                if (contactWarning) {
-                    contactWarning.classList.remove('focused');
-                }
-            }
-            
-            if (overlay) {
-                overlay.classList.remove('active');
-            }
-            
-            // Scroll de volta ao topo
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+// ===== EVENT HANDLERS =====
+const EventHandlers = {
+    /**
+     * Handler para envio do formulário
+     */
+    onSubmit(e) {
+        console.log('Submit event disparado');
+        e.preventDefault();
+        FormProcessor.processar();
+    },
+
+    /**
+     * Handler para mudança de arquivo
+     */
+    onFileChange(e) {
+        const file = e.target.files[0];
+        if (file && FileManager.validarArquivo(file)) {
+            FileManager.mostrarArquivo(file);
         }
-    }, 1000);
-}
+    },
+
+    /**
+     * Handlers para drag and drop
+     */
+    onDragOver(e) {
+        e.preventDefault();
+        this.style.borderColor = 'var(--cor-detalhes)';
+        this.style.background = 'rgba(255, 255, 255, 0.08)';
+    },
+
+    onDragLeave(e) {
+        e.preventDefault();
+        this.style.borderColor = 'var(--cor-bordas-form)';
+        this.style.background = 'rgba(255, 255, 255, 0.02)';
+    },
+
+    onDrop(e) {
+        e.preventDefault();
+        this.style.borderColor = 'var(--cor-bordas-form)';
+        this.style.background = 'rgba(255, 255, 255, 0.02)';
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && FileManager.validarArquivo(files[0])) {
+            FileManager.mostrarArquivo(files[0]);
+        }
+    }
+};
+
+// ===== INICIALIZAÇÃO =====
+const App = {
+    /**
+     * Inicializa a aplicação
+     */
+    init() {
+        console.log('Inicializando aplicação...');
+        
+        // Preparar posicionamento inicial
+        this.setupInitialPosition();
+        this.setupForm();
+        this.setupFileUpload();
+        this.setupDragAndDrop();
+        this.startDemo();
+    },
+
+    /**
+     * Configura posicionamento inicial correto
+     */
+    setupInitialPosition() {
+        // Adicionar classe para controle inicial
+        document.body.classList.add('initial-load');
+        
+        // Posicionar no título "GERADOR AUTOMÁTICO DE PETIÇÕES" imediatamente
+        setTimeout(() => {
+            const pageTitle = document.querySelector('.page-title');
+            if (pageTitle) {
+                // Scroll instantâneo sem animação para o título principal
+                const elementPosition = pageTitle.offsetTop - 80; // Margem superior
+                window.scrollTo(0, elementPosition);
+                console.log('Posicionado no título principal');
+            }
+            
+            // Remover classe inicial e aplicar transições suaves
+            setTimeout(() => {
+                document.body.classList.remove('initial-load');
+                document.body.classList.add('loaded');
+            }, 100);
+        }, 50);
+    },
+
+    /**
+     * Configura eventos do formulário
+     */
+    setupForm() {
+        const form = document.getElementById('peticaoForm');
+        if (form) {
+            form.addEventListener('submit', EventHandlers.onSubmit);
+            console.log('Event listener do formulário configurado');
+        } else {
+            console.error('Formulário não encontrado!');
+        }
+    },
+
+    /**
+     * Configura upload de arquivos
+     */
+    setupFileUpload() {
+        const anexoInput = document.getElementById('anexo');
+        if (anexoInput) {
+            anexoInput.addEventListener('change', EventHandlers.onFileChange);
+        }
+    },
+
+    /**
+     * Configura drag and drop
+     */
+    setupDragAndDrop() {
+        const uploadArea = document.querySelector('.file-upload-area');
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', EventHandlers.onDragOver);
+            uploadArea.addEventListener('dragleave', EventHandlers.onDragLeave);
+            uploadArea.addEventListener('drop', EventHandlers.onDrop);
+        }
+    },
+
+    /**
+     * Inicia demonstração automática
+     */
+    startDemo() {
+        // Estado inicial limpo
+        Demo.limparFormulario();
+        
+        // Arquivo anexado visível por padrão (demo)
+        const fileAttached = document.getElementById('fileAttached');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        if (fileAttached && uploadPlaceholder) {
+            fileAttached.style.display = 'flex';
+            uploadPlaceholder.style.display = 'none';
+        }
+        
+        // Iniciar demo após delay (posição já está correta)
+        setTimeout(() => {
+            console.log('Iniciando demonstração automática...');
+            Demo.executar();
+        }, CONFIG.delays.inicioDemo);
+    }
+};
+
+// ===== FUNÇÕES GLOBAIS (MANTIDAS PARA COMPATIBILIDADE) =====
 
 /**
- * Função para remover arquivo anexado
+ * Função global para remoção de arquivo (chamada pelo HTML)
  */
 function removerArquivo() {
-    const fileAttached = document.getElementById('fileAttached');
-    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-    const btnUpload = document.querySelector('.btn-upload');
-    
-    // Confirmar remoção
-    if (confirm('Tem certeza que deseja remover este arquivo?')) {
-        fileAttached.style.display = 'none';
-        uploadPlaceholder.style.display = 'block';
-        btnUpload.textContent = 'Selecionar Arquivo';
-        
-        // Limpar input
-        document.getElementById('anexo').value = '';
-    }
+    FileManager.removerArquivo();
 }
 
 /**
- * Função para processar upload de arquivo
- * @param {File} file - Arquivo selecionado
+ * Função global para download (chamada pelo HTML)
  */
-function processarUpload(file) {
-    const fileAttached = document.getElementById('fileAttached');
-    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-    const btnUpload = document.querySelector('.btn-upload');
-    
-    // Validar tipo de arquivo
-    const tiposAceitos = ['application/pdf', 'application/msword', 
-                         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                         'image/jpeg', 'image/jpg', 'image/png'];
-    
-    if (!tiposAceitos.includes(file.type)) {
-        alert('Tipo de arquivo não suportado. Use PDF, DOC, DOCX, JPG ou PNG.');
-        return;
-    }
-    
-    // Validar tamanho (10MB max)
-    if (file.size > 10 * 1024 * 1024) {
-        alert('Arquivo muito grande. Tamanho máximo: 10MB.');
-        return;
-    }
-    
-    // Atualizar interface
-    const fileName = file.name;
-    const fileSize = (file.size / 1024).toFixed(0) + ' KB';
-    
-    fileAttached.querySelector('.file-name').textContent = fileName;
-    fileAttached.querySelector('.file-size').textContent = fileSize;
-    
-    uploadPlaceholder.style.display = 'none';
-    fileAttached.style.display = 'flex';
-    btnUpload.textContent = 'Alterar Arquivo';
+function baixarPDFReal() {
+    DownloadManager.baixarPDF();
 }
 
 /**
- * Função para validar campos obrigatórios
- * @returns {boolean} - true se todos os campos estão preenchidos
+ * Função global para buscar objetivos (funcionalidade oculta)
  */
-function validarFormulario() {
-    const campos = [
-        'nome_peticao',
-        'clube',
-        'competicao',
-        'acusacao',
-        'contexto',
-        'pedidos'
-    ];
-
-    for (let campo of campos) {
-        const elemento = document.getElementById(campo);
-        if (!elemento) {
-            console.error(`Campo ${campo} não encontrado!`);
-            continue;
-        }
-        
-        const valor = elemento.value.trim();
-        if (!valor) {
-            alert(`Por favor, preencha o campo "${document.querySelector(`label[for="${campo}"]`).textContent.replace(' *', '')}".`);
-            elemento.focus();
-            return false;
-        }
-    }
-    
-    // Verificar se há arquivo anexado
-    const fileAttached = document.getElementById('fileAttached');
-    if (!fileAttached || fileAttached.style.display === 'none') {
-        alert('Por favor, anexe o documento da intimação.');
-        return false;
-    }
-    
-    return true;
+function buscarObjetivosIA() {
+    AIHelper.buscarObjetivos();
 }
 
-/**
- * Função para processar o formulário de petição
- * Simula o comportamento da API do Gemini
- */
-function processarPeticao() {
-    console.log('Função processarPeticao chamada');
-    
-    const submitBtn = document.getElementById('submitBtn');
-    const downloadSection = document.getElementById('downloadSection');
-    
-    if (!submitBtn) {
-        console.error('Botão submit não encontrado!');
-        return;
-    }
-    
-    // Remover animações de destaque
-    submitBtn.classList.remove('btn-attention', 'btn-pulse');
-    
-    console.log('Iniciando validação...');
-    
-    // Validação
-    if (!validarFormulario()) {
-        console.log('Validação falhou');
-        // Reativar animação se validação falhar
-        submitBtn.classList.add('btn-pulse');
-        return;
-    }
-    
-    console.log('Validação passou, iniciando processamento...');
+// ===== INICIALIZAÇÃO AUTOMÁTICA =====
 
-    // Simular processamento
-    submitBtn.innerHTML = '🤖 Justinho está trabalhando...';
-    submitBtn.disabled = true;
-    submitBtn.classList.add('loading');
+// Flag para controlar inicialização única
+let appInitialized = false;
 
-    // Simular tempo de processamento da IA (1-2 segundos)
-    const tempoProcessamento = Math.random() * 1000 + 1000; // Entre 1-2 segundos
-    
-    console.log(`Tempo de processamento: ${tempoProcessamento}ms`);
-    
-    setTimeout(() => {
-        console.log('Processamento concluído, mostrando resultado...');
-        
-        submitBtn.innerHTML = 'Gerar Petição com Justinho';
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('loading');
-        
-        // Mostrar seção de download
-        if (downloadSection) {
-            downloadSection.classList.add('show');
-            downloadSection.style.display = 'block';
-            
-            // Ativar modo foco total no download
-            setTimeout(() => {
-                document.body.classList.add('page-focus-download');
-                downloadSection.classList.add('focused');
-                
-                const contactWarning = downloadSection.querySelector('.contact-warning');
-                if (contactWarning) {
-                    contactWarning.classList.add('focused');
-                }
-                
-                const overlay = document.getElementById('downloadOverlay');
-                if (overlay) {
-                    overlay.classList.add('active');
-                }
-                
-                // Scroll suave para a seção de download
-                setTimeout(() => {
-                    downloadSection.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                    });
-                }, 300);
-                
-            }, 200);
-            
-            console.log('Seção de download exibida com foco total');
-            
-            // Vibração de sucesso no mobile
-            if (navigator.vibrate) {
-                navigator.vibrate([100, 50, 100, 50, 200]);
-            }
-        } else {
-            console.error('Seção de download não encontrada!');
-        }
-        
-    }, tempoProcessamento);
-}
-
-/**
- * Função para preencher exemplo (útil para demonstrações)
- */
-function preencherExemplo() {
-    document.getElementById('nome_peticao').value = 'João Silva Santos';
-    document.getElementById('clube').value = 'Sport Club Internacional';
-    document.getElementById('competicao').value = 'Campeonato Brasileiro Série A';
-    document.getElementById('acusacao').value = 'Conduta violenta contra adversário durante partida';
-    document.getElementById('contexto').value = 'Durante o segundo tempo da partida contra o Flamengo, houve um lance disputado na área onde ocorreu contato físico. O árbitro interpretou como conduta violenta, mas as imagens mostram que foi um lance normal de jogo, sem intenção de agredir.';
-    document.getElementById('pedidos').value = 'Arquivamento da denúncia por ausência de dolo e desclassificação da conduta';
-}
-
-/**
- * Função para adicionar botão de exemplo (opcional)
- * Descomente para usar em demonstrações
- */
-function adicionarBotaoExemplo() {
-    const formActions = document.querySelector('.form-actions');
-    const exemploBtn = document.createElement('button');
-    exemploBtn.type = 'button';
-    exemploBtn.className = 'btn btn-secondary';
-    exemploBtn.textContent = '📝 Preencher Exemplo';
-    exemploBtn.onclick = preencherExemplo;
-    formActions.appendChild(exemploBtn);
-}
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM carregado, inicializando eventos e demonstração...');
-    
-    // Limpar formulário completamente ao carregar
-    document.getElementById('peticaoForm').reset();
-    
-    // Garantir que o arquivo anexado esteja visível inicialmente
-    const fileAttached = document.getElementById('fileAttached');
-    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-    if (fileAttached && uploadPlaceholder) {
-        fileAttached.style.display = 'flex';
-        uploadPlaceholder.style.display = 'none';
+// Inicializar quando DOM estiver pronto
+document.addEventListener('DOMContentLoaded', () => {
+    if (!appInitialized) {
+        console.log('DOM carregado, inicializando aplicação...');
+        appInitialized = true;
+        App.init();
     }
-    
-    // Ocultar seção de download
-    const downloadSection = document.getElementById('downloadSection');
-    if (downloadSection) {
-        downloadSection.classList.remove('show');
-        downloadSection.style.display = 'none';
-    }
-    
-    // Limpar sugestões de objetivos
-    const sugestoes = document.getElementById('sugestoes-objetivos');
-    if (sugestoes) {
-        sugestoes.style.display = 'none';
-        sugestoes.innerHTML = '';
-    }
-    
-    // Iniciar demonstração automaticamente após 1 segundo
-    setTimeout(() => {
-        console.log('Iniciando demonstração automática...');
-        iniciarDemo();
-    }, 1000);
-    
-    // Adicionar evento de submit ao formulário
-    const form = document.getElementById('peticaoForm');
-    if (form) {
-        console.log('Formulário encontrado, adicionando event listener...');
-        form.addEventListener('submit', function(e) {
-            console.log('Submit event disparado');
-            e.preventDefault();
-            processarPeticao();
-        });
+});
+
+// Backup para window.load (só se ainda não foi inicializado)
+window.addEventListener('load', () => {
+    if (!appInitialized) {
+        console.log('Página carregada completamente, inicializando via backup...');
+        appInitialized = true;
+        setTimeout(() => App.init(), 100);
     } else {
-        console.error('Formulário não encontrado!');
-    }
-
-    // Evento para upload de arquivo
-    const anexoInput = document.getElementById('anexo');
-    if (anexoInput) {
-        anexoInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                processarUpload(file);
-            }
-        });
-    }
-
-    // Drag and drop para área de upload
-    const uploadArea = document.querySelector('.file-upload-area');
-    if (uploadArea) {
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.style.borderColor = 'var(--cor-detalhes)';
-            this.style.background = 'rgba(255, 255, 255, 0.08)';
-        });
-        
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.style.borderColor = 'var(--cor-bordas-form)';
-            this.style.background = 'rgba(255, 255, 255, 0.02)';
-        });
-        
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.style.borderColor = 'var(--cor-bordas-form)';
-            this.style.background = 'rgba(255, 255, 255, 0.02)';
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                processarUpload(files[0]);
-            }
-        });
+        console.log('Aplicação já inicializada, pulando backup load');
     }
 });
 
-// Também iniciar a demonstração quando a janela carregar completamente
-window.addEventListener('load', function() {
-    console.log('Página carregada completamente, verificando demonstração...');
-    // Pequeno delay adicional para garantir que tudo está carregado
-    setTimeout(() => {
-        // Verificar se a demonstração já não está rodando
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn && !submitBtn.disabled) {
-            console.log('Iniciando demonstração via window.load...');
-            iniciarDemo();
-        }
-    }, 500);
-});
-
-// Iniciar demonstração quando a página ficar visível (para casos de cache)
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-        console.log('Página ficou visível, verificando demonstração...');
-        setTimeout(() => {
-            const submitBtn = document.getElementById('submitBtn');
-            if (submitBtn && !submitBtn.disabled) {
-                console.log('Iniciando demonstração via visibilitychange...');
-                iniciarDemo();
-            }
-        }, 500);
+// Backup para visibilitychange (só se ainda não foi inicializado)
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !appInitialized) {
+        console.log('Página ficou visível, inicializando via backup visibilitychange...');
+        appInitialized = true;
+        setTimeout(() => App.init(), 100);
     }
 });
